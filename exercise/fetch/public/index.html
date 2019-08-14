@@ -20,7 +20,12 @@
 		document.getElementById("error").textContent = `${error.name}: ${error.message}`;
 	}
 
-	const parseJson = res => res.json();
+	const parseJson = res => {
+		if (res.ok) {
+			return res.json()
+		}
+		throw new Error("4xx error");
+	};
 
 	// change this
 	const request = function(method, url) {
@@ -29,10 +34,10 @@
 
 
 	// #1 GET 2xx
-	request("GET", "http://localhost:3001/posts").then(successHandler).catch(errorHandler)
+	// request("GET", "http://localhost:3001/posts").then(successHandler).catch(errorHandler)
 
 	// #2 GET 4xx
-	// request("GET", "http://localhost:3001/404").then(successHandler).catch(errorHandler)
+	request("GET", "http://localhost:3001/404").then(successHandler).catch(errorHandler)
 
 	// #3 GET 5xx
 	//request("GET", "http://localhost:3001/timeout").then(successHandler).catch(errorHandler)
