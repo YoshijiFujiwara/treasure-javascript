@@ -22,13 +22,12 @@
 	};
 
 	const parseJson = res => {
-
 		if (res.ok) {
 			return res.text().then(text => {
 				try {
 					return JSON.parse(text);
 				} catch (e) {
-					return text
+					throw new Error('cant json parse')
 				}
 			})
 		} else if (res.status >= 500 && res.status < 600) {
@@ -39,9 +38,31 @@
 	};
 
 	// change this
-	const request = function(method, url) {
-		return fetch(url).then(parseJson);
+	const request = function(method, url, data = {}) {
+		switch (method) {
+			case "GET":
+				console.log('get');
+				return fetch(url, {
+					method
+				}).then(parseJson);
+			case "PUT":
+				console.log("put");
+				return fetch(url, {
+					headers: {
+						"Content-Type": "application/json; charset=utf-8",
+					},
+					method,
+					body: JSON.stringify(data)
+				}).then(parseJson);
+		}
+
 	};
+
+	// const requestWithTimeout = function(millisecond) {
+	//
+	// 	return request(method, url)
+	// }
+
 
 	// #1 GET 2xx
 	// request("GET", "http://localhost:3001/posts").then(successHandler).catch(errorHandler)
@@ -53,10 +74,10 @@
 	// request("GET", "http://localhost:3001/timeout").then(successHandler).catch(errorHandler)
 
 	// #4 GET 2xx but not json
-	request("GET", "http://localhost:3001/index.html").then(successHandler).catch(errorHandler)
+	// request("GET", "http://localhost:3001/index.html").then(successHandler).catch(errorHandler)
 
 	// #5 PUT
-	// request("PUT", "http://localhost:3001/posts/1", {"id": 1, "title": "treasure", "author": "{{CHANGE YOUR NAME}}" }).then(successHandler).catch(errorHandler)
+	request("PUT", "http://localhost:3001/posts/1", {"id": "1", "title": "トレジャー", "author": "hogehoge" }).then(successHandler).catch(errorHandler)
 
 	// #6 GET /timeout with Timeout
 	// requestWithTimeout(2000)("GET", "http://localhost:3001/timeout").then(successHandler).catch(errorHandler)
